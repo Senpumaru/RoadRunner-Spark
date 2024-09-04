@@ -1,0 +1,33 @@
+FROM openjdk:11-jdk-slim
+
+# Install wget and other dependencies
+RUN apt-get update && apt-get install -y wget maven
+
+# Set Spark version
+ENV SPARK_VERSION=3.5.2
+ENV HADOOP_VERSION=3
+
+# Download and install Spark
+RUN wget https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && \
+    tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && \
+    mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} /spark && \
+    rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
+
+# Set Spark environment variables
+ENV SPARK_HOME=/spark
+ENV PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+
+# Set up working directory
+WORKDIR /app
+
+# Copy the Maven POM file
+COPY pom.xml .
+
+# Download dependencies
+RUN mvn dependency:go-offline
+
+# Copy source code
+COPY src ./src
+
+# Keep the container running
+CMD ["tail", "-f", "/dev/null"]

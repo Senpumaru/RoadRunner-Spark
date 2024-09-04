@@ -1,0 +1,5 @@
+pyspark==3.5.2
+pandas
+matplotlib
+seaborn
+findspark

@@ -1,0 +1,21 @@
+FROM openjdk:11-jdk-slim
+
+# Install Python and pip
+RUN apt-get update && \
+    apt-get install -y python3.9 python3-pip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip and install Python dependencies
+COPY requirements.txt .
+RUN python3.9 -m pip install --upgrade pip && \
+    python3.9 -m pip install --no-cache-dir -r requirements.txt
+
+# Set up alternatives for python
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
+
+# Set the working directory
+WORKDIR /app
+
+# Keep the container running
+CMD ["tail", "-f", "/dev/null"]

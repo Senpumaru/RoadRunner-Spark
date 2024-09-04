@@ -1,0 +1,94 @@
+services:
+  spark-master:
+    image: bitnami/spark:3.5.2
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "8180:8080"
+      - "7077:7077"
+    volumes:
+      - spark-data:/bitnami
+      - ./datasets:/app/datasets
+
+  spark-worker:
+    image: bitnami/spark:3.5.2
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=12G
+      - SPARK_WORKER_CORES=6
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    depends_on:
+      - spark-master
+    volumes:
+      - spark-data:/bitnami
+      - ./datasets:/app/datasets
+
+  python-dev:
+    
+    container_name: python-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.python-dev
+    volumes:
+      # - ./:/app
+      - ./src:/app/src
+      - ./datasets:/app/datasets
+    working_dir: /app
+    command: tail -f /dev/null
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    ports:
+      - "4040:4040"  # Spark UI port
+    depends_on:
+      - spark-master
+
+  java-dev:
+    
+    build:
+      context: .
+      dockerfile: Dockerfile.java-dev
+    container_name: java-dev
+    volumes:
+      - ./:/app
+      # - ./src/java:/app/src
+      # - ./tests/java:/app/tests
+      # - ./datasets:/app/datasets
+    working_dir: /app
+    command: tail -f /dev/null
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    depends_on:
+      - spark-master
+
+  scala-dev:
+    image: hseeberger/scala-sbt:11.0.2-oraclelinux7_1.3.5_2.12.10
+    container_name: scala-dev
+    volumes:
+      - ./src/scala:/app/src
+      - ./tests/scala:/app/tests
+      - ./datasets:/app/datasets
+    working_dir: /app
+    command: tail -f /dev/null
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    depends_on:
+      - spark-master
+
+volumes:
+  spark-data:
+  datasets:
+
+networks:
+  default:
+    name: roadrunner-network
+    external: true
