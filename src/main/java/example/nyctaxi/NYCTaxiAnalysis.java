@@ -31,10 +31,10 @@ public class NYCTaxiAnalysis {
         Aggregations.performAggregations(cleanTaxiDF);
 
         // Apply window functions
-        WindowFunctions.applyWindowFunctions(cleanTaxiDF);
+        // WindowFunctions.applyWindowFunctions(cleanTaxiDF);
 
         // Join with external data
-        ExternalDataJoin.joinWithLocationData(spark, cleanTaxiDF);
+        // ExternalDataJoin.joinWithLocationData(spark, cleanTaxiDF);
 
         // Unpersist the cached DataFrame
         cleanTaxiDF.unpersist();

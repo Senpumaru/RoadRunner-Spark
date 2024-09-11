@@ -1,1 +1,4 @@
 com/example/nyctaxi/NYCTaxiAnalysis.class
+com/example/nyctaxi/Aggregations.class
+com/example/nyctaxi/DataCleaning.class
+com/example/nyctaxi/ParquetToPostgres.class
