@@ -1,6 +1,8 @@
 services:
   spark-master:
-    image: bitnami/spark:3.5.2
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-master
     environment:
       - SPARK_MODE=master
@@ -8,15 +10,21 @@ services:
       - SPARK_RPC_ENCRYPTION_ENABLED=no
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_REGION=us-east-1
     ports:
       - "8180:8080"
       - "7077:7077"
     volumes:
       - spark-data:/bitnami
       - ./datasets:/app/datasets
+      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
 
   spark-worker:
-    image: bitnami/spark:3.5.2
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-worker
     environment:
       - SPARK_MODE=worker
@@ -27,14 +35,18 @@ services:
       - SPARK_RPC_ENCRYPTION_ENABLED=no
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_REGION=us-east-1
     depends_on:
       - spark-master
     volumes:
       - spark-data:/bitnami
       - ./datasets:/app/datasets
+      - ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
 
   python-dev:
-    
+
     container_name: python-dev
     build:
       context: .
@@ -47,13 +59,15 @@ services:
     command: tail -f /dev/null
     environment:
       - SPARK_MASTER=spark://spark-master:7077
+      - PYSPARK_PYTHON=python3
+      - PYSPARK_DRIVER_PYTHON=python3
     ports:
-      - "4040:4040"  # Spark UI port
+      - "4040:4040" # Spark UI port
     depends_on:
       - spark-master
 
   java-dev:
-    
+
     build:
       context: .
       dockerfile: Dockerfile.java-dev
@@ -87,6 +101,7 @@ services:
 volumes:
   spark-data:
   datasets:
+
 
 networks:
   default:
