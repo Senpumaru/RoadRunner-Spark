@@ -6,7 +6,7 @@ conf = SparkConf()
 conf.set("spark.sql.catalog.iceberg", "org.apache.iceberg.spark.SparkCatalog")
 conf.set("spark.sql.catalog.iceberg.type", "rest")
 conf.set("spark.sql.catalog.iceberg.uri", "http://iceberg-rest:8181")
-conf.set("spark.sql.catalog.iceberg.warehouse", "s3a://iceberg-warehouse")
+conf.set("spark.sql.catalog.iceberg.warehouse", "s3a://warehouse")
 conf.set("spark.sql.catalog.iceberg.io-impl", "org.apache.iceberg.aws.s3.S3FileIO")
 conf.set("spark.sql.catalog.iceberg.s3.endpoint", "http://minio:9000")
 conf.set("spark.hadoop.fs.s3a.access.key", "minioadmin")
@@ -35,14 +35,14 @@ test_data = spark.createDataFrame([(1, "test")], ["id", "value"])
 
 # Try to write directly to S3
 try:
-    test_data.write.mode("overwrite").parquet("s3a://iceberg-warehouse/test_write")
+    test_data.write.mode("overwrite").parquet("s3a://warehouse/test_write")
     print("Successfully wrote to S3")
 except Exception as e:
     print("Failed to write to S3:", str(e))
 
 # Try to read from S3
 try:
-    spark.read.parquet("s3a://iceberg-warehouse/test_write").show()
+    spark.read.parquet("s3a://warehouse/test_write").show()
     print("Successfully read from S3")
 except Exception as e:
     print("Failed to read from S3:", str(e))
