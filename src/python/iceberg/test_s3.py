@@ -16,7 +16,7 @@ for bucket in response['Buckets']:
     print(f'  {bucket["Name"]}')
 
 # Try to create a test object
-bucket_name = 'iceberg-warehouse'
+bucket_name = 'test'
 object_key = 'test-object.txt'
 s3.put_object(Bucket=bucket_name, Key=object_key, Body='Hello, Iceberg!')
 print(f"Created test object: s3://{bucket_name}/{object_key}")

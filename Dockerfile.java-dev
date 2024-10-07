@@ -4,7 +4,7 @@ FROM openjdk:11-jdk-slim
 RUN apt-get update && apt-get install -y wget maven
 
 # Set Spark version
-ENV SPARK_VERSION=3.5.2
+ENV SPARK_VERSION=3.5.3
 ENV HADOOP_VERSION=3
 
 # Download and install Spark

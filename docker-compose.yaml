@@ -66,23 +66,23 @@ services:
     depends_on:
       - spark-master
 
-  java-dev:
+  # java-dev:
 
-    build:
-      context: .
-      dockerfile: Dockerfile.java-dev
-    container_name: java-dev
-    volumes:
-      - ./:/app
-      # - ./src/java:/app/src
-      # - ./tests/java:/app/tests
-      # - ./datasets:/app/datasets
-    working_dir: /app
-    command: tail -f /dev/null
-    environment:
-      - SPARK_MASTER=spark://spark-master:7077
-    depends_on:
-      - spark-master
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.java-dev
+  #   container_name: java-dev
+  #   volumes:
+  #     - ./:/app
+  #     # - ./src/java:/app/src
+  #     # - ./tests/java:/app/tests
+  #     # - ./datasets:/app/datasets
+  #   working_dir: /app
+  #   command: tail -f /dev/null
+  #   environment:
+  #     - SPARK_MASTER=spark://spark-master:7077
+  #   depends_on:
+  #     - spark-master
 
   scala-dev:
     image: hseeberger/scala-sbt:11.0.2-oraclelinux7_1.3.5_2.12.10
